@@ -1,3 +1,9 @@
+"""Creates json file of a GTFS trip update.
+
+The program takes a path to a directory, creates an output filename using the current time, gets the trip update
+from the API url, converts the FeedMessage to a json object, and writes the json object to the file name.
+"""
+
 import urllib.request
 import json
 import time
@@ -7,7 +13,12 @@ from protobuf_to_dict import protobuf_to_dict
 
 
 def crt_outfile(out_dir):
-    """Creates output path for file with filename unique to every second"""
+    """Creates output path for file with filename unique to every second.
+
+    Args:
+        out_dir: path to desired output directory
+    Returns:
+        the path to the output file"""
 
     date = time.strftime('%Y_%m_%d-%H_%M_%S_%p')
     filename = f'BART_{date}.json'
@@ -16,6 +27,13 @@ def crt_outfile(out_dir):
 
 
 def crt_trip_update_json(url):
+    """Converts a GTFS API FeedMessage into a JSON object.
+
+    Args:
+        url: API url for trip update, generally http://.../.../tripupdate.aspx
+    Returns:
+        A JSON object of the data returned by the API request."""
+    
     gtfs_feed = gtfs_realtime_pb2.FeedMessage()
     gtfs_feed.ParseFromString(urllib.request.urlopen(url).read())
     gtfs_dict = protobuf_to_dict(gtfs_feed)
